@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fastcampus.toy2_7.dao.NoticeMapper">
+    <sql id="noticeForm">
+        select noticeID, noticeTitle,noticeContent,priority,status,regId, regDate, modId, modDate
+        from notice
+    </sql>
+    <select id="count" resultType="int">
+        -- 전체 컬럼 수
+        select count(*) from Notice
+    </select>
+
+    <select id="selectOne" parameterType="int" resultType="NoticeDto">
+        -- noticeID 값과 동일한 필드 1개 검색
+        <include refid="noticeForm"/>
+        where noticeID = #{noticeID}
+    </select>
+
+    <select id="selectAll" resultType="NoticeDto">
+        -- 전체 필드 검색
+        <include refid="noticeForm"/>
+        ORDER BY noticeID asc;
+
+    </select>
+
+    <delete id="deleteAll">
+        -- 전체 필드 삭제
+        DELETE from notice;
+    </delete>
+
+    <delete id="deleteById" parameterType="int">
+        -- 특정 필드 1개 삭제
+        DELETE from notice where noticeID = #{noticeID};
+    </delete>
+
+    <insert id="insert" parameterType="NoticeDto">
+        -- 필드 삽입
+        insert into notice (noticeID,noticeTitle, noticeContent,regId,regDate)
+        values
+            (#{noticeID}, #{noticeTitle},#{noticeContent},#{regId},#{regDate});
+    </insert>
+
+    <update id="update" parameterType="NoticeDto">
+        -- 필드 수정
+        update notice
+        set noticeID = #{noticeID},
+            noticeTitle = #{noticeTitle},
+            noticeContent = #{noticeContent},
+            modDate = now()
+        where noticeID = #{noticeID};
+    </update>
+
+</mapper>

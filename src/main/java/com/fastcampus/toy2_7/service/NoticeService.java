@@ -17,13 +17,21 @@ public interface NoticeService {
         */
     List<NoticeDto> readAllNotices() throws Exception;
 
+    List<NoticeDto> readVisibleNotices();
+
     NoticeDto readNotice(int noticeID);
 
     int creatNotice(NoticeDto noticeDto);
+
+    int creatAutoNotice(NoticeDto noticeDto);
 
     int deleteAllNotices();
 
     int deleteNotice(int noticeID);
 
     int deleteNotices(List<Integer> noticeIDs);
+
+    int updateNotice(NoticeDto noticeDto);
+
+    void updateDisplayFlags(List<Integer> displayFlagIds);
 }

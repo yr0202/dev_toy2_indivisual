@@ -14,6 +14,7 @@ public class NoticeDto {
     private LocalDateTime regDate;
     private String modId;
     private LocalDateTime modDate;
+    private String displayFlag;
 
     public NoticeDto() {}
     public NoticeDto(int noticeID, String noticeTitle, String noticeContent){
@@ -41,6 +42,7 @@ public class NoticeDto {
                 ", regDate=" + regDate +
                 ", modId='" + modId + '\'' +
                 ", modDate=" + modDate +
+                ", displayFlag='" + displayFlag + '\'' +
                 '}';
     }
 
@@ -49,13 +51,23 @@ public class NoticeDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         NoticeDto noticeDto = (NoticeDto) o;
-        return noticeID == noticeDto.noticeID && priority == noticeDto.priority && Objects.equals(noticeTitle, noticeDto.noticeTitle) && Objects.equals(noticeContent, noticeDto.noticeContent) && Objects.equals(status, noticeDto.status) && Objects.equals(regId, noticeDto.regId) && Objects.equals(regDate, noticeDto.regDate) && Objects.equals(modId, noticeDto.modId) && Objects.equals(modDate, noticeDto.modDate);
+        return noticeID == noticeDto.noticeID && priority == noticeDto.priority && Objects.equals(noticeTitle, noticeDto.noticeTitle) && Objects.equals(noticeContent, noticeDto.noticeContent) && Objects.equals(status, noticeDto.status) && Objects.equals(regId, noticeDto.regId) && Objects.equals(regDate, noticeDto.regDate) && Objects.equals(modId, noticeDto.modId) && Objects.equals(modDate, noticeDto.modDate) && Objects.equals(displayFlag, noticeDto.displayFlag);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(noticeID, noticeTitle, noticeContent, priority, status, regId, regDate, modId, modDate);
+        return Objects.hash(noticeID, noticeTitle, noticeContent, priority, status, regId, regDate, modId, modDate, displayFlag);
     }
+
+    public String getDisplayFlag() {
+        return displayFlag;
+    }
+
+    public void setDisplayFlag(String displayFlag) {
+        this.displayFlag = displayFlag;
+    }
+
+
 
     public int getNoticeID() {
         return noticeID;
@@ -128,7 +140,5 @@ public class NoticeDto {
     public void setModDate(LocalDateTime modDate) {
         this.modDate = modDate;
     }
-
-
 
 }

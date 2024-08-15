@@ -6,7 +6,7 @@
 
 <mapper namespace="com.fastcampus.toy2_7.dao.NoticeMapper">
     <sql id="noticeForm">
-        select noticeID, noticeTitle,noticeContent,priority,status,regId, regDate, modId, modDate
+        select noticeID, noticeTitle,noticeContent,priority,status,regId, regDate, modId, modDate, displayFlag
         from notice
     </sql>
     <select id="count" resultType="int">
@@ -23,7 +23,15 @@
     <select id="selectAll" resultType="NoticeDto">
         -- 전체 필드 검색
         <include refid="noticeForm"/>
-        ORDER BY noticeID asc;
+        ORDER BY priority desc, regDate desc;
+
+    </select>
+
+    <select id="selectVisible" resultType="NoticeDto">
+        -- 전체 필드 검색
+        <include refid="noticeForm"/>
+        where displayFlag = 'y'
+        ORDER BY priority desc, regDate desc;
 
     </select>
 
@@ -52,15 +60,38 @@
         values
             (#{noticeID}, #{noticeTitle},#{noticeContent},#{regId},#{regDate});
     </insert>
+    <insert id="insertAI" parameterType="NoticeDto">
+        -- 필드 삽입
+        insert into notice (noticeTitle, noticeContent,regId,regDate,displayFlag)
+        values
+            ( #{noticeTitle},#{noticeContent},#{regId},now(),#{displayFlag});
+    </insert>
 
     <update id="update" parameterType="NoticeDto">
         -- 필드 수정
         update notice
-        set noticeID = #{noticeID},
+        set
             noticeTitle = #{noticeTitle},
             noticeContent = #{noticeContent},
-            modDate = now()
+            modDate = now(),
+            displayFlag = #{displayFlag}
         where noticeID = #{noticeID};
+    </update>
+
+    <!--모든 게시물 'n'으로 초기화-->
+    <update id="setDisplayFlgsN">
+        Update notice
+        set displayFlag = 'n';
+    </update>
+
+    <!-- 선택된 공지사항의 display_flag를 'y'로 설정 -->
+    <update id="setDisplayFlags" parameterType="list">
+        UPDATE notice
+        SET displayFlag = 'y'
+        WHERE noticeID IN
+        <foreach item="id" index="index" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
     </update>
 
 </mapper>

@@ -4,6 +4,9 @@
 <c:set var="loginId" value="${pageContext.request.getSession(false)==null ? '' : pageContext.request.session.getAttribute('id')}"/>
 <c:set var="loginOutLink" value="${loginId=='' ? '/login/login' : '/login/logout'}"/>
 <c:set var="loginOut" value="${loginId=='' ? 'Login' : 'ID='+=loginId}"/>
+
+<%--로그인, 회원가입, 공지사항, 상품목록보기, 내주문 버튼 만들기--%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,7 +20,7 @@
     <ul>
         <li id="logo">fastcampus</li>
         <li><a href="<c:url value='/'/>">Home</a></li>
-        <li><a href="<c:url value='/board/list'/>">Board</a></li>
+        <li><a href="<c:url value='/notices'/>">공지사항</a></li>
         <li><a href="<c:url value='${loginOutLink}'/>">${loginOut}</a></li>
         <li><a href="<c:url value='/register/add'/>">SignUp</a></li>
         <li><a href=""><i class="fa fa-search"></i></a></li>

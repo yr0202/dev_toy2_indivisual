@@ -26,6 +26,11 @@ public class NoticeServiceImpl implements NoticeService {
     public List<NoticeDto> readAllNotices() throws Exception {
         return noticeDao.selectAll();
     }
+
+    @Override
+    public List<NoticeDto> readVisibleNotices(){
+        return noticeDao.selectVisible();
+    }
     @Override
     public NoticeDto readNotice(int noticeID){
         return noticeDao.selectOne(noticeID);
@@ -35,6 +40,10 @@ public class NoticeServiceImpl implements NoticeService {
         return noticeDao.insert(noticeDto);
     }
     @Override
+    public int creatAutoNotice(NoticeDto noticeDto){
+        return noticeDao.insertAI(noticeDto);
+    }
+    @Override
     public int deleteAllNotices(){
         return noticeDao.deleteAll(); // 삭제된 행의 수
     }
@@ -42,8 +51,29 @@ public class NoticeServiceImpl implements NoticeService {
     public int deleteNotice(int noticeID){
         return noticeDao.deleteById(noticeID);
     }
+//    @Override
+//    public void deleteNotices(List<Integer> noticeIDs){
+//        if (noticeIDs != null)
+//            noticeDao.deleteByIds(noticeIDs);
+//    }
     @Override
     public int deleteNotices(List<Integer> noticeIDs){
-        return noticeDao.deleteByIds(noticeIDs);
+
+        return    noticeDao.deleteByIds(noticeIDs);
+    }
+    @Override
+    public int updateNotice(NoticeDto noticeDto){
+        return noticeDao.update(noticeDto);
+    }
+
+    @Override
+    public void updateDisplayFlags(List<Integer> displayFlagIds) {
+        // 1. 모든 displayFlags들은 'n'을 기본값으로 설정
+        noticeDao.setDisplayFlagsN();
+
+        //2. 선택된 게시물들만 y로 재설정
+        if (displayFlagIds != null ) {
+            noticeDao.setDisplayFlags(displayFlagIds); // 선택된 공지의 display_flag를 'y'로 설정
+        }
     }
 }

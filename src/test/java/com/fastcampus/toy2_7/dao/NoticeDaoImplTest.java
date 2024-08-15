@@ -305,6 +305,11 @@ public class NoticeDaoImplTest {
         System.out.println("noticeDao = " + noticeDao);
     }
 
+    @Test
+    public void displayFlagsN(){
+//        assertTrue();
+    }
+
 //    List<NoticeDto> makeNoticeList() {
 //        List<NoticeDto> list = new ArrayList<NoticeDto>();
 //        for(int i=1;i<=20;i++){

@@ -11,6 +11,8 @@ public interface NoticeDao {
 
     List<NoticeDto> selectAll() throws Exception;
 
+    List<NoticeDto> selectVisible();
+
     int deleteAll();
 
     int deleteById(int noticeID);
@@ -19,5 +21,10 @@ public interface NoticeDao {
 
     int insert(NoticeDto noticeDto);
 
+    int insertAI(NoticeDto noticeDto);
+
     int update(NoticeDto noticeDto);
+
+    void setDisplayFlagsN();
+    void setDisplayFlags(List<Integer> displayFlagIds);
 }

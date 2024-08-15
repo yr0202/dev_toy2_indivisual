@@ -4,6 +4,6 @@
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
     <typeAliases>
-<!--        <typeAlias alias="BoardDto" type="com.fastcampus.toy2_7.domain.BoardDto"/>-->
+        <typeAlias alias="NoticeDto" type="com.fastcampus.toy2_7.domain.NoticeDto"/>
     </typeAliases>
 </configuration>

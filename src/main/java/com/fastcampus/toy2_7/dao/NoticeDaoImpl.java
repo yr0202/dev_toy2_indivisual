@@ -1,6 +1,7 @@
 package com.fastcampus.toy2_7.dao;
 
 import com.fastcampus.toy2_7.domain.NoticeDto;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -31,6 +32,11 @@ public class NoticeDaoImpl implements NoticeDao {
     }
 
     @Override
+    public List<NoticeDto> selectVisible(){
+        return session.selectList(namespace+"selectVisible");
+    }
+
+    @Override
     public int deleteAll(){
         return session.delete(namespace+"deleteAll");
     }
@@ -51,7 +57,22 @@ public class NoticeDaoImpl implements NoticeDao {
     }
 
     @Override
+    public int insertAI(NoticeDto noticeDto){
+        return session.insert(namespace+"insertAI",noticeDto);
+    }
+
+    @Override
     public int update(NoticeDto noticeDto){
         return session.update(namespace+"update",noticeDto);
+    }
+
+    @Override
+    public void setDisplayFlagsN(){
+        session.update(namespace+"setDisplayFlgsN");
+    }
+
+    @Override
+    public void setDisplayFlags(@Param("ids") List<Integer> displayFlagIds){
+        session.update(namespace+"setDisplayFlags",displayFlagIds);
     }
 }

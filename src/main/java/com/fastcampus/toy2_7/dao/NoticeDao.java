@@ -3,6 +3,7 @@ package com.fastcampus.toy2_7.dao;
 import com.fastcampus.toy2_7.domain.NoticeDto;
 
 import java.util.List;
+import java.util.Map;
 
 public interface NoticeDao {
     int count() throws Exception;
@@ -12,6 +13,8 @@ public interface NoticeDao {
     List<NoticeDto> selectAll() throws Exception;
 
     List<NoticeDto> selectVisible();
+
+    List<NoticeDto> selectPage(Map map);
 
     int deleteAll();
 

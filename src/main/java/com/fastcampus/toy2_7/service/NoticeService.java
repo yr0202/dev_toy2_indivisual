@@ -3,6 +3,7 @@ package com.fastcampus.toy2_7.service;
 import com.fastcampus.toy2_7.domain.NoticeDto;
 
 import java.util.List;
+import java.util.Map;
 
 public interface NoticeService {
     /*
@@ -15,11 +16,15 @@ public interface NoticeService {
         - 게시물 수정(updateNotice)
         - 게시물 검색(searchNotices)
         */
+
+    int getCount() throws Exception;
+
     List<NoticeDto> readAllNotices() throws Exception;
 
     List<NoticeDto> readVisibleNotices();
 
     NoticeDto readNotice(int noticeID);
+    List<NoticeDto> getPage(Map map);
 
     int creatNotice(NoticeDto noticeDto);
 

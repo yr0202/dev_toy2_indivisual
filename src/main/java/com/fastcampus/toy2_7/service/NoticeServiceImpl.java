@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class NoticeServiceImpl implements NoticeService {
@@ -22,9 +23,19 @@ public class NoticeServiceImpl implements NoticeService {
     - 게시물 수정(updateNotice)
     - 게시물 검색(searchNotices)
     */
+
+    @Override
+    public int getCount() throws Exception {
+        return noticeDao.count();
+    }
     @Override
     public List<NoticeDto> readAllNotices() throws Exception {
         return noticeDao.selectAll();
+    }
+
+    @Override
+    public List<NoticeDto> getPage(Map map) {
+        return noticeDao.selectPage(map);
     }
 
     @Override

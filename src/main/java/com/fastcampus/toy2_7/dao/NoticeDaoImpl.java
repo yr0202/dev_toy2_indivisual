@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class NoticeDaoImpl implements NoticeDao {
@@ -18,6 +19,11 @@ public class NoticeDaoImpl implements NoticeDao {
     @Override
     public int count() throws Exception{
         return session.selectOne(namespace+"count");
+    }
+
+    @Override
+    public List<NoticeDto> selectPage(Map map) {
+        return session.selectList(namespace+"selectPage",map);
     }
 
     @Override

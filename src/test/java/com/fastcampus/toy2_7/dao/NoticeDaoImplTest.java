@@ -155,7 +155,7 @@ public class NoticeDaoImplTest {
         noticeDao.deleteAll(); // 전처리 과정:모든 데이터 삭제
         assertTrue(noticeDao.count() == 0); // 삭제 확인
 
-        for (int i = 1; i <= 20; i++) { // 데이터 20개 넣어보기
+        for (int i = 1; i <= 280; i++) { // 데이터 20개 넣어보기
             NoticeDto noticeDto = new NoticeDto(i, "title" + i, "content" + i, "user" + i, LocalDateTime.now());
             assertTrue(noticeDao.insert(noticeDto) == 1); // 성공한 행의 수
         }
@@ -163,6 +163,14 @@ public class NoticeDaoImplTest {
         int id = 1; // 20개 데이터 중 제대로 insert 됐는지 1개만 확인
         NoticeDto noticeDto = noticeDao.selectOne(id);
         assertTrue(noticeDto.getNoticeTitle().equals("title"+id));
+    }
+
+    @Test // 테스트 데이터 여러개 넣을려고 만든 코드
+    public void insertDataTest() throws Exception {
+        for (int i = 1; i <= 280; i++) {
+            NoticeDto noticeDto = new NoticeDto( "title" + i, "content" + i, "user" + i, LocalDateTime.now(), "n");
+            noticeDao.insertAI(noticeDto);
+        }
     }
 
     // 삽입 실패

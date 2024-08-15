@@ -24,7 +24,12 @@
         -- 전체 필드 검색
         <include refid="noticeForm"/>
         ORDER BY priority desc, regDate desc;
+    </select>
 
+    <select id="selectPage" parameterType="map" resultType="NoticeDto">
+        <include refid="noticeForm"/>
+        ORDER BY priority desc, regDate desc
+        LIMIT #{offset}, #{pageSize};
     </select>
 
     <select id="selectVisible" resultType="NoticeDto">

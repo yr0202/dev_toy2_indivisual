@@ -20,20 +20,26 @@
         where noticeID = #{noticeID}
     </select>
 
+    <!--관리자 전용 전체 게시물 select-->
     <select id="selectAll" resultType="NoticeDto">
-        -- 전체 필드 검색
         <include refid="noticeForm"/>
         ORDER BY priority desc, regDate desc;
-
     </select>
 
+    <!-- 관리자가 아닌 사람만 볼 수 있는 게시물 목록 select-->
     <select id="selectVisible" resultType="NoticeDto">
-        -- 전체 필드 검색
         <include refid="noticeForm"/>
         where displayFlag = 'y'
         ORDER BY priority desc, regDate desc;
-
     </select>
+
+    <select id="selectPage" parameterType="map" resultType="NoticeDto">
+        <include refid="noticeForm"/>
+        ORDER BY noticeID desc, regDate desc
+        LIMIT #{offset}, #{pageSize};
+    </select>
+
+
 
     <delete id="deleteAll">
         -- 전체 필드 삭제

@@ -29,6 +29,13 @@ public class NoticeDto {
         this.regId = regId;
         this.noticeContent = noticeContent;
     }
+    public NoticeDto( String noticeTitle,String noticeContent, String regId, LocalDateTime regDate, String displayFlag){
+        this.noticeTitle = noticeTitle;
+        this.regDate = regDate;
+        this.regId = regId;
+        this.noticeContent = noticeContent;
+        this.displayFlag = displayFlag;
+    }
 
     @Override
     public String toString() {

@@ -117,5 +117,21 @@
     </c:if>
 </form>
 
+<%--페이징관련 div--%>
+<div>
+    <!-- 페이징 네비게이션 -->
+    <c:if test="${ph.showPrev}">
+        <a href="?page=${ph.beginPage-1}">[PREV]</a>
+    </c:if>
+
+    <c:forEach begin="${ph.beginPage}" end="${ph.endPage}" var="i">
+        <a href="?page=${i}">${i}</a>
+    </c:forEach>
+
+    <c:if test="${ph.showNext}">
+        <a href="?page=${ph.endPage+1}">[NEXT]</a>
+    </c:if>
+</div>
+
 </body>
 </html>

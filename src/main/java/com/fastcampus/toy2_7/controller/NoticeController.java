@@ -1,14 +1,18 @@
 package com.fastcampus.toy2_7.controller;
 
 import com.fastcampus.toy2_7.domain.NoticeDto;
+import com.fastcampus.toy2_7.domain.PageHandler;
 import com.fastcampus.toy2_7.service.NoticeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/notices")
@@ -25,23 +29,44 @@ public class NoticeController {
     @Autowired
     NoticeService noticeService;
 
+    // 1. 전체 공지사항 목록 보기 (페이징 추가)
     @GetMapping
-    public String getNoticelist(@RequestParam(value = "role", required = false, defaultValue = "admin") String role, Model m, HttpSession session) throws Exception {
+    public String getNoticeList(@RequestParam(value = "role", required = false, defaultValue = "admin") String role,
+                                @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+                                @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
+                                Model m, HttpServletRequest request) throws Exception {
         List<NoticeDto> noticeList;
 
+        HttpSession session = request.getSession();
+//        String role = session.getAttribute("role"); //원래는 세션에서 role의 값을 가져와야함
+
+        // 임의로 세션에 "userId" 값을 세팅함
         if (role.equals("admin")) {
-            // 관리자는 모든 게시물을 볼 수 있음
-            noticeList = noticeService.readAllNotices();
-            session.setAttribute("userId", "admin1");  // 사용자 ID 임의로 설정
+            session.setAttribute("userId", "admin1");
         } else {
-            noticeList = noticeService.readVisibleNotices();
             session.setAttribute("userId", "user1");
         }
+        // 임의로 세션에 "role" 값을 세팅함
         session.setAttribute("role", role);
+
+
+        // role에 따라 볼 수 있는 목록 화면이 다름
+        int totalCnt;
+        if (role.equals("admin")) {
+            // 관리자는 모든 게시물을 볼 수 있음
+            totalCnt = noticeService.getTotalCount();
+            noticeList = noticeService.getNotices(page, pageSize);
+        } else {
+            totalCnt = noticeService.getVisibleNoticeCount();
+            noticeList = noticeService.getVisibleNotices(page, pageSize);
+        }
+
+        PageHandler ph = new PageHandler(totalCnt, page, pageSize);
 
         m.addAttribute("notices", noticeList);
         m.addAttribute("userId", session.getAttribute("userId"));
         m.addAttribute("role", session.getAttribute("role"));    // 사용자 권한을 설정
+        m.addAttribute("ph", ph);
 
         return "notice/list";
     }

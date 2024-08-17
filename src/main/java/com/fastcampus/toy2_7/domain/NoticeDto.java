@@ -31,9 +31,18 @@ public class NoticeDto {
     }
     public NoticeDto( String noticeTitle,String noticeContent, String regId, LocalDateTime regDate, String displayFlag){
         this.noticeTitle = noticeTitle;
+        this.noticeContent = noticeContent;
         this.regDate = regDate;
         this.regId = regId;
         this.noticeContent = noticeContent;
+        this.displayFlag = displayFlag;
+    }
+
+    public NoticeDto(String noticeTitle, String noticeContent, String displayFlag, String modId, LocalDateTime modDate) {
+        this.noticeTitle = noticeTitle;
+        this.noticeContent = noticeContent;
+        this.modId = modId;
+        this.modDate = modDate;
         this.displayFlag = displayFlag;
     }
 

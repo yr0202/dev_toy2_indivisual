@@ -215,14 +215,14 @@ public class NoticeDaoImplTest {
         assertTrue(noticeDto.getNoticeTitle().equals("title"+id));
     }
 
-    // 의미없는 테스트 코드
-    @Test // 테스트 데이터 여러개 넣을려고 만든 테스트
-    public void insertDataTest() throws Exception {
-        for (int i = 1; i <= 280; i++) {
-            NoticeDto noticeDto = new NoticeDto( "title" + i, "content" + i, "user" + i, LocalDateTime.now(), "n");
-            noticeDao.insertAI(noticeDto);
-        }
-    }
+//    // 의미없는 테스트 코드
+//    @Test // 테스트 데이터 여러개 넣을려고 만든 테스트
+//    public void insertDataTest() throws Exception {
+//        for (int i = 1; i <= 280; i++) {
+//            NoticeDto noticeDto = new NoticeDto( "title" + i, "content" + i, "user" + i, LocalDateTime.now(), "n");
+//            noticeDao.insertAI(noticeDto);
+//        }
+//    }
 
     // 삽입 실패
     @Test

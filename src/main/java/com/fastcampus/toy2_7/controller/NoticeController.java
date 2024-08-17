@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.time.LocalDateTime.now;
+
 /*
 1.전체 공지사항 목록 보기
 3.공지사항 작성 - admin
@@ -31,9 +33,15 @@ public class NoticeController {
     NoticeService noticeService;
 
     @GetMapping
-    public String getNoticelist(@RequestParam(value = "role", required = false, defaultValue = "admin") String role, Model m, HttpSession session) throws Exception {
+    public String getNoticelist( Model m, HttpSession session) throws Exception {
         List<NoticeDto> noticeList;
-//
+
+        // role이 admin인지 user인지 임의로 설정
+        session.setAttribute("role", "admin");
+//        session.setAttribute("role", "user");
+
+        String role = (String) session.getAttribute("role");
+
         if (role.equals("admin")) {
             // 관리자는 모든 게시물을 볼 수 있음
             noticeList = noticeService.readAllNotices();
@@ -50,6 +58,27 @@ public class NoticeController {
 
         return "notice/list";
     }
+
+//    @GetMapping
+//    public String getNoticelist(@RequestParam(value = "role", required = false, defaultValue = "admin") String role, Model m, HttpSession session) throws Exception {
+//        List<NoticeDto> noticeList;
+////
+//        if (role.equals("admin")) {
+//            // 관리자는 모든 게시물을 볼 수 있음
+//            noticeList = noticeService.readAllNotices();
+//            session.setAttribute("userId", "admin1");  // 사용자 ID 임의로 설정
+//        } else {
+//            noticeList = noticeService.readVisibleNotices();
+//            session.setAttribute("userId", "user1");
+//        }
+//        session.setAttribute("role", role);
+//
+//        m.addAttribute("notices", noticeList);
+//        m.addAttribute("userId", session.getAttribute("userId"));
+//        m.addAttribute("role", session.getAttribute("role"));    // 사용자 권한을 설정
+//
+//        return "notice/list";
+//    }
 
     // 세션 or dto 가져와서 값 확인하기...
 
@@ -77,7 +106,8 @@ public class NoticeController {
     }
     // 3. 공지사항 작성
     @PostMapping("/insertNotice")
-    public String create(NoticeDto noticeDto) {
+    public String create(NoticeDto noticeDto,HttpSession session) {
+        noticeDto.setRegId((String)session.getAttribute("userId"));
         noticeService.creatAutoNotice(noticeDto);
 //        return "notice/create";
         return "redirect:/notices";  // 생성 후 목록 페이지로 리다이렉트
@@ -93,12 +123,14 @@ public class NoticeController {
 
     @PostMapping("/edit/{id}")
     public String update(@PathVariable("id") int noticeID,
-                         @ModelAttribute NoticeDto noticeDto) {
+                         @ModelAttribute NoticeDto noticeDto,HttpSession session) {
 
         if (noticeDto.getDisplayFlag() == null) {
             noticeDto.setDisplayFlag("n");  // 기본값 'n'으로 지정
         }
         noticeDto.setNoticeID(noticeID);
+        noticeDto.setModId((String)session.getAttribute("userId"));
+        noticeDto.setModDate(now());
         noticeService.updateNotice(noticeDto);
         return "redirect:/notices";
     }

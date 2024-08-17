@@ -63,6 +63,11 @@ public class NoticeDaoImpl implements NoticeDao {
     }
 
     @Override
+    public int update2(NoticeDto noticeDto){
+        return session.update(namespace+"update2",noticeDto);
+    }
+
+    @Override
     public int update(NoticeDto noticeDto){
         return session.update(namespace+"update",noticeDto);
     }

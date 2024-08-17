@@ -82,6 +82,19 @@
         where noticeID = #{noticeID};
     </update>
 
+    <!-- 기존 update매퍼는 원래 update2였음. modId 추가하려고 이름 변경함-->
+    <update id="update2" parameterType="NoticeDto">
+        -- 필드 수정
+        update notice
+        set
+            noticeTitle = #{noticeTitle},
+            noticeContent = #{noticeContent},
+            modId = #{modId},
+            modDate = #{modDate},
+            displayFlag = #{displayFlag}
+        where noticeID = #{noticeID};
+    </update>
+
     <!--모든 게시물 'n'으로 초기화-->
     <update id="setDisplayFlgsN">
         Update notice

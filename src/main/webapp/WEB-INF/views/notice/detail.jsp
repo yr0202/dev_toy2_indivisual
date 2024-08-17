@@ -22,11 +22,11 @@
 <p>작성자: ${notice.regId}</p>
 <p>작성날짜: ${notice.regDate}</p>
 <p>수정자: ${notice.modId}</p>
-<p>수정날짜: ${notice.regDate}</p>
+<p>수정날짜: ${notice.modDate}</p>
 
 <a href="${pageContext.request.contextPath}/notices">전체목록</a>
-<a href="${pageContext.request.contextPath}/notices/${notice.noticeID}/edit">편집하기</a>
-<form action="${pageContext.request.contextPath}/notices/${notice.noticeID}/delete" method="post" style="display:inline;" onsubmit="return confirmDelete();">
+<a href="${pageContext.request.contextPath}/notices/edit/${notice.noticeID}">편집하기</a>
+<form action="${pageContext.request.contextPath}/notices/delete/${notice.noticeID}" method="post" style="display:inline;" onsubmit="return confirmDelete();">
     <button type="submit">Delete</button>
 </form>
 

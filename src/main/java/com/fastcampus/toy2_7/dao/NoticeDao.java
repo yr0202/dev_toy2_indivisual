@@ -26,6 +26,7 @@ public interface NoticeDao {
 
     int insertAI(NoticeDto noticeDto);
 
+    int update2(NoticeDto noticeDto);
     int update(NoticeDto noticeDto);
 
     void setDisplayFlagsN();

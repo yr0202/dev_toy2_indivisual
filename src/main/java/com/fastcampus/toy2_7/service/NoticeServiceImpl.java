@@ -74,7 +74,7 @@ public class NoticeServiceImpl implements NoticeService {
     }
     @Override
     public int updateNotice(NoticeDto noticeDto){
-        return noticeDao.update(noticeDto);
+        return noticeDao.update2(noticeDto);
     }
 
     @Override

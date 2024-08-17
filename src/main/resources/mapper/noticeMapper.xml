@@ -2,17 +2,19 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<!-- deleteByIds 추가하기 -->
 
 <mapper namespace="com.fastcampus.toy2_7.dao.NoticeMapper">
     <sql id="noticeForm">
         select noticeID, noticeTitle,noticeContent,priority,status,regId, regDate, modId, modDate, displayFlag
         from notice
     </sql>
+
+
+    <!--전체 컬럼 수-->
     <select id="count" resultType="int">
-        -- 전체 컬럼 수
         select count(*) from Notice
     </select>
+
 
     <select id="selectOne" parameterType="int" resultType="NoticeDto">
         -- noticeID 값과 동일한 필드 1개 검색
@@ -27,18 +29,12 @@
     </select>
 
     <!-- 관리자가 아닌 사람만 볼 수 있는 게시물 목록 select-->
+    <!-- displayFlag =='y'인 게시물만 볼 수 있음 -->
     <select id="selectVisible" resultType="NoticeDto">
         <include refid="noticeForm"/>
         where displayFlag = 'y'
         ORDER BY priority desc, regDate desc;
     </select>
-
-    <select id="selectPage" parameterType="map" resultType="NoticeDto">
-        <include refid="noticeForm"/>
-        ORDER BY noticeID desc, regDate desc
-        LIMIT #{offset}, #{pageSize};
-    </select>
-
 
 
     <delete id="deleteAll">
@@ -57,7 +53,7 @@
         where noticeID in
         <foreach item="item" collection="list" open="(" separator="," close=")">
             #{item}
-        </foreach> ; -- DELETE FROM notice WHERE noticeID IN (1, 2, 3);
+        </foreach> ;
     </delete>
 
     <insert id="insert" parameterType="NoticeDto">
@@ -66,6 +62,8 @@
         values
             (#{noticeID}, #{noticeTitle},#{noticeContent},#{regId},#{regDate});
     </insert>
+
+    <!-- AI=AutoIncrement -->
     <insert id="insertAI" parameterType="NoticeDto">
         -- 필드 삽입
         insert into notice (noticeTitle, noticeContent,regId,regDate,displayFlag)
@@ -90,7 +88,7 @@
         set displayFlag = 'n';
     </update>
 
-    <!-- 선택된 공지사항의 display_flag를 'y'로 설정 -->
+    <!-- 선택된 게시물의 displayFlag를 'y'로 설정 -->
     <update id="setDisplayFlags" parameterType="list">
         UPDATE notice
         SET displayFlag = 'y'
@@ -99,5 +97,12 @@
             #{id}
         </foreach>
     </update>
+
+    <!-- 페이징처리 -->
+    <select id="selectPage" parameterType="map" resultType="NoticeDto">
+        <include refid="noticeForm"/>
+        ORDER BY noticeID desc, regDate desc
+        LIMIT #{offset}, #{pageSize};
+    </select>
 
 </mapper>

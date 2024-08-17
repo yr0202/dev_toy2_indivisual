@@ -37,15 +37,15 @@
 </c:if>
 
 <!-- 검색 폼 -->
-<form action="${pageContext.request.contextPath}/notices/search" method="get">
-    <select name="searchType">
-        <option value="all">제목+내용</option>
-        <option value="title">제목만</option>
-        <option value="content">내용만</option>
-    </select>
-    <input type="text" name="keyword" placeholder="검색어를 입력하세요">
-    <button type="submit">검색</button>
-</form>
+<%--<form action="${pageContext.request.contextPath}/notices/search" method="get">--%>
+<%--    <select name="searchType">--%>
+<%--        <option value="all">제목+내용</option>--%>
+<%--        <option value="title">제목만</option>--%>
+<%--        <option value="content">내용만</option>--%>
+<%--    </select>--%>
+<%--    <input type="text" name="keyword" placeholder="검색어를 입력하세요">--%>
+<%--    <button type="submit">검색</button>--%>
+<%--</form>--%>
 
 <form action="${pageContext.request.contextPath}/notices/updateDisplayFlags" method="post">
     <table border="1">
@@ -116,20 +116,22 @@
         <button type="submit" formaction="${pageContext.request.contextPath}/notices/delete" onclick="return confirmDelete();">Delete Selected</button>
     </c:if>
 </form>
-<div>
-    <!-- 페이징 네비게이션 -->
-    <c:if test="${ph.showPrev}">
-        <a href="?page=${ph.beginPage-1}">[PREV]</a>
-    </c:if>
 
-    <c:forEach begin="${ph.beginPage}" end="${ph.endPage}" var="i">
-        <a href="?page=${i}">${i}</a>
-    </c:forEach>
+<%--&lt;%&ndash;페이징관련 div&ndash;%&gt;--%>
+<%--<div>--%>
+<%--    <!-- 페이징 네비게이션 -->--%>
+<%--    <c:if test="${ph.showPrev}">--%>
+<%--        <a href="?page=${ph.beginPage-1}">[PREV]</a>--%>
+<%--    </c:if>--%>
 
-    <c:if test="${ph.showNext}">
-        <a href="?page=${ph.endPage+1}">[NEXT]</a>
-    </c:if>
-</div>
+<%--    <c:forEach begin="${ph.beginPage}" end="${ph.endPage}" var="i">--%>
+<%--        <a href="?page=${i}">${i}</a>--%>
+<%--    </c:forEach>--%>
+
+<%--    <c:if test="${ph.showNext}">--%>
+<%--        <a href="?page=${ph.endPage+1}">[NEXT]</a>--%>
+<%--    </c:if>--%>
+<%--</div>--%>
 
 </body>
 </html>

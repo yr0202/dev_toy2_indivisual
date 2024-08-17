@@ -15,7 +15,51 @@ public class NoticeServiceImplTest {
     NoticeServiceImpl noticeService;
 
     @Test
+    public void getCount() {
+
+    }
+
+    @Test
     public void readAllNotices() {
-        
+    }
+
+    @Test
+    public void getPage() {
+    }
+
+    @Test
+    public void readVisibleNotices() {
+    }
+
+    @Test
+    public void readNotice() {
+    }
+
+    @Test
+    public void creatNotice() {
+    }
+
+    @Test
+    public void creatAutoNotice() {
+    }
+
+    @Test
+    public void deleteAllNotices() {
+    }
+
+    @Test
+    public void deleteNotice() {
+    }
+
+    @Test
+    public void deleteNotices() {
+    }
+
+    @Test
+    public void updateNotice() {
+    }
+
+    @Test
+    public void updateDisplayFlags() {
     }
 }

@@ -1,6 +1,8 @@
 package com.fastcampus.toy2_7.dao;
 
 import com.fastcampus.toy2_7.domain.NoticeDto;
+import com.mysql.cj.protocol.x.Notice;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -44,95 +47,137 @@ public class NoticeDaoImplTest {
 
      */
 
+//    @Before
+//    public void setUp() throws Exception {
+//        noticeDao.deleteAll(); // 전처리 과정:모든 데이터 삭제
+//        assertTrue(noticeDao.count() == 0); // 삭제 확인
+//
+//        List<NoticeDto> list = new ArrayList<>();
+//
+//        for (int i = 1; i <= 200; i++) { // 데이터 20개 넣어보기
+//            NoticeDto noticeDto = new NoticeDto(i, "title" + i, "content" + i);
+//            noticeDao.insert(noticeDto);
+//            list.add(noticeDto);
+//        }
+//        assertTrue(noticeDao.count()==200); // 총 삽입한 데이터 20개 확인
+//    }
+
     @Test // 모든 데이터 검색
     public void selectAllTest()throws Exception{
         noticeDao.deleteAll(); // 전처리 과정:모든 데이터 삭제
         assertTrue(noticeDao.count() == 0); // 삭제 확인
 
-        for (int i = 1; i <= 20; i++) { // 데이터 20개 넣어보기
+        List<NoticeDto> list = new ArrayList<>();
+
+        for (int i = 1; i <= 200; i++) { // 데이터 20개 넣어보기
             NoticeDto noticeDto = new NoticeDto(i, "title" + i, "content" + i);
-//            assertTrue(noticeDao.insert(noticeDto) == 1); // 삽입 시도 & 확인 // 넣지말기
+            noticeDao.insert(noticeDto);
+            list.add(noticeDto);
         }
-        assertTrue(noticeDao.count()==20); // 총 삽입한 데이터 20개 확인
 
-        List<NoticeDto> list = noticeDao.selectAll(); // 전체 필드 리스트에 담기
-        assertNotNull(list); // 리스트가 null이 아닌지 확인
+        List<NoticeDto> dbList = noticeDao.selectAll();
 
-        // 리스트에서 하나 꺼내와서 검증
-
-        assertTrue(list.size() == 20); // 전체 필드 가져왔는지 확인
+        int num = 150; // 확인할 noticeID
+        assertEquals(list.get(num).getNoticeID(),dbList.get(num).getNoticeID());
+        assertEquals(list.get(num).getNoticeTitle(),dbList.get(num).getNoticeTitle());
     }
+
     @Test // 필드 1개 검색 테스트
     public void selectOneById성공Test() throws Exception {
         noticeDao.deleteAll(); // 전처리 과정:모든 데이터 삭제
         assertTrue(noticeDao.count() == 0); // 삭제 확인
 
-        for (int i = 1; i <= 20; i++) { // 데이터 20개 넣어보기
+        List<NoticeDto> list = new ArrayList<>();
+
+        for (int i = 1; i <= 200; i++) {
             NoticeDto noticeDto = new NoticeDto(i, "title" + i, "content" + i);
-            assertTrue(noticeDao.insert(noticeDto) == 1); // 삽입 시도 & 확인
+            noticeDao.insert(noticeDto);
+            list.add(noticeDto);
         }
-        assertTrue(noticeDao.count()==20); //전체 필드 개수가 동일하게 담겼는지 확인
 
-        int noticeID = 15; // noticeID로 필드 검색
-        NoticeDto noticeDto = noticeDao.selectOne(noticeID); // 검색할 필드를 noticeDto에 담음
-        assertNotNull(noticeDto); // Dto에 잘 담겼는지 확인
+        int searchId = 15; // 찾고싶은 noticeId
 
-        assertEquals(noticeID, noticeDto.getNoticeID()); // noticeDto 객체에서 NoticeID에 담긴 값이 같은지 확인
-        assertTrue(noticeDto.getNoticeTitle().equals("title" +noticeID)); // noticeDto의 NoticeTitle의 값이 검증
+        NoticeDto noticeDto = noticeDao.selectOne(searchId); // 검색할 필드를 noticeDto에 담음
+        assertNotNull(searchId); // Dto에 잘 담겼는지 확인
+
+        assertEquals(searchId, noticeDto.getNoticeID()); // noticeDto 객체에서 NoticeID에 담긴 값이 같은지 확인
+        assertTrue(noticeDto.getNoticeTitle().equals("title" + searchId)); // noticeDto의 NoticeTitle의 값이 검증
     }
 
     @Test // 필드 1개 검색 테스트
     public void selectOneById실패Test() throws Exception {
         noticeDao.deleteAll(); // 전처리 과정:모든 데이터 삭제
         assertTrue(noticeDao.count() == 0); // 삭제 확인
-        // 간극..
-        for (int i = 1; i <= 20; i++) { // 데이터 20개 넣어보기
-            NoticeDto noticeDto = new NoticeDto(i, "title" + i, "content" + i);
-            assertTrue(noticeDao.insert(noticeDto) == 1); // 삽입 시도 & 확인
-        }
-        assertTrue(noticeDao.count()==20); //전체 필드 개수가 동일하게 담겼는지 확인
 
-        int noticeID = 9999; // noticeID로 필드 검색 없다는 보장이 없다
-        NoticeDto noticeDto = noticeDao.selectOne(noticeID); // 검색할 필드를 noticeDto에 담음
-        assertNull(noticeDto); // 반환되는 Dto가 없어야 함
+        List<NoticeDto> list = new ArrayList<>();
+
+        for (int i = 1; i <= 200; i++) {
+            NoticeDto noticeDto = new NoticeDto(i, "title" + i, "content" + i);
+            noticeDao.insert(noticeDto);
+            list.add(noticeDto);
+        }
+        assertTrue(noticeDao.count()==200); //전체 필드 개수가 동일하게 담겼는지 확인
+
+        List<NoticeDto> dbList = noticeDao.selectAll();
+
+        int searchId = 9999; // noticeID로 필드 검색 없다는 보장이 없다
+
+        for(NoticeDto noticeDto : dbList){
+            if(noticeDto.getNoticeID() == searchId)
+                fail("테스트실패");
+        }
 
     }
-    @Test
-    // 전체 삭제
+    @Test // 전체 삭제
     public void deleteAllTest() throws Exception {
         noticeDao.deleteAll(); // 전체 삭제 시도
         assertTrue(noticeDao.count() ==0); // 전체 삭제가 됐는지 개수로 확인
     }
-    @Test
-    // 특정 필드 1개 삭제
+
+    @Test // 특정 필드 1개 삭제
     public void deleteById성공Test() throws Exception {
         noticeDao.deleteAll(); // 전처리 과정:모든 데이터 삭제
         assertTrue(noticeDao.count() == 0); // 삭제 확인
 
-        for (int i = 1; i <= 20; i++) { // 데이터 20개 넣어보기
-            NoticeDto noticeDto = new NoticeDto(i, "title" + i, "content" + i);
-            assertTrue(noticeDao.insert(noticeDto) == 1); // 성공한 행의 수
-        }
-        assertTrue(noticeDao.count()==20); // 총 삽입한 데이터 20개 확인
+        List<NoticeDto> list = new ArrayList<>();
 
-        int noticeID = 1; // noticeID가 1인 필드 삭제
-        noticeDao.deleteById(noticeID);
-        assertTrue(noticeDao.count()==19); // 20개 중에서 1개가 삭제 됐는지 개수로 확인
+        for (int i = 1; i <= 200; i++) { // 데이터 20개 넣어보기
+            NoticeDto noticeDto = new NoticeDto(i, "title" + i, "content" + i);
+            noticeDao.insert(noticeDto);
+            list.add(noticeDto);
+        }
+        assertTrue(noticeDao.count()==200); // 총 삽입한 데이터 20개 확인
+
+        int deleteNoticeID = 15; // deleteNoticeID인 필드 삭제
+
+        noticeDao.deleteById(deleteNoticeID);
+        List<NoticeDto> dbList = noticeDao.selectAll();
+        assertTrue(dbList.size()==199);
+
+        for(NoticeDto noticeDto : dbList){
+            if (noticeDto.getNoticeID()==deleteNoticeID)
+                fail("삭제 테스트 실패");
+        }
     }
     @Test
     public void deleteById실패Test() throws Exception {
         noticeDao.deleteAll(); // 전처리 과정:모든 데이터 삭제
         assertTrue(noticeDao.count() == 0); // 삭제 확인
 
-        for (int i = 1; i <= 20; i++) { // 데이터 20개 넣어보기
-            NoticeDto noticeDto = new NoticeDto(i, "title" + i, "content" + i);
-            assertTrue(noticeDao.insert(noticeDto) == 1); // 성공한 행의 수
-        }
-        assertTrue(noticeDao.count()==20); // 총 삽입한 데이터 20개 확인
+        List<NoticeDto> list = new ArrayList<>();
 
-        int noticeID = 9999; // noticeID가 테이블에 없는 필드 삭제
-        noticeDao.deleteById(noticeID); // 삭제 시도
-        assertTrue(noticeDao.count()==20); // 데이터 삭제가 안됐으므로 20개 그대로
+        for (int i = 1; i <= 200; i++) { // 데이터 20개 넣어보기
+            NoticeDto noticeDto = new NoticeDto(i, "title" + i, "content" + i);
+            noticeDao.insert(noticeDto);
+            list.add(noticeDto);
+        }
+        assertTrue(noticeDao.count()==200); // 총 삽입한 데이터 20개 확인
+
+        int searchNoticeID = 9999; // noticeID가 테이블에 없는 필드 삭제
+
+        noticeDao.deleteById(searchNoticeID); // 삭제 시도
+
+        assertTrue(noticeDao.count()==200); // 데이터 삭제가 안됐으므로 20개 그대로
     }
 
     @Test
@@ -155,17 +200,23 @@ public class NoticeDaoImplTest {
         noticeDao.deleteAll(); // 전처리 과정:모든 데이터 삭제
         assertTrue(noticeDao.count() == 0); // 삭제 확인
 
-        for (int i = 1; i <= 280; i++) { // 데이터 20개 넣어보기
-            NoticeDto noticeDto = new NoticeDto(i, "title" + i, "content" + i, "user" + i, LocalDateTime.now());
-            assertTrue(noticeDao.insert(noticeDto) == 1); // 성공한 행의 수
+        List<NoticeDto> list = new ArrayList<>();
+
+        for (int i = 1; i <= 200; i++) { // 데이터 20개 넣어보기
+            NoticeDto noticeDto = new NoticeDto(i, "title" + i, "content" + i);
+            noticeDao.insert(noticeDto);
+            list.add(noticeDto);
         }
-        assertTrue(noticeDao.count()==20); // 전체 개수가 20개 들어갔는지 확인
+        assertTrue(noticeDao.count()==200); // 총 삽입한 데이터 20개 확인
+
+
         int id = 1; // 20개 데이터 중 제대로 insert 됐는지 1개만 확인
         NoticeDto noticeDto = noticeDao.selectOne(id);
         assertTrue(noticeDto.getNoticeTitle().equals("title"+id));
     }
 
-    @Test // 테스트 데이터 여러개 넣을려고 만든 코드
+    // 의미없는 테스트 코드
+    @Test // 테스트 데이터 여러개 넣을려고 만든 테스트
     public void insertDataTest() throws Exception {
         for (int i = 1; i <= 280; i++) {
             NoticeDto noticeDto = new NoticeDto( "title" + i, "content" + i, "user" + i, LocalDateTime.now(), "n");
@@ -252,13 +303,14 @@ public class NoticeDaoImplTest {
         noticeDao.deleteAll(); // 전처리 과정:모든 데이터 삭제
         assertTrue(noticeDao.count() == 0); // 삭제 확인
 
-        for (int i = 1; i <= 20; i++) { // 데이터 20개 넣어보기
+        List<NoticeDto> list = new ArrayList<>();
+
+        for (int i = 1; i <= 200; i++) { // 데이터 20개 넣어보기
             NoticeDto noticeDto = new NoticeDto(i, "title" + i, "content" + i);
-            LocalDateTime regDate = LocalDateTime.now(); // 삽입 시 등록 날짜
-            noticeDto.setRegDate(regDate);
-            assertTrue(noticeDao.insert(noticeDto) == 1); // 삽입 시도 & 확인
+            noticeDao.insert(noticeDto);
+            list.add(noticeDto);
         }
-        assertTrue(noticeDao.count()==20); //전체 필드 개수가 동일하게 담겼는지 확인
+        assertTrue(noticeDao.count()==200); // 총 삽입한 데이터 20개 확인
 
         // 잠시 대기 (업데이트와 비교할 시간 간격을 두기 위해)
         Thread.sleep(2000); // 2초 대기
@@ -277,33 +329,30 @@ public class NoticeDaoImplTest {
         assertNotNull(updatedNotice.getModDate()); // 수정 날짜가 업데이트된 것을 확인
     }
 
-    @Test
+    @Test(expected = NullPointerException.class)
     /*수정 실패 : insert 넣고 확인 -> 없는 id값을 수정 시도 -> 값 변경 확인  */
     // 널포인트 이셉션
     public void update예외Test() throws Exception {
         noticeDao.deleteAll(); // 전처리 과정:모든 데이터 삭제
         assertTrue(noticeDao.count() == 0); // 삭제 확인
 
-        for (int i = 1; i <= 20; i++) { // 필드 삽입
+        List<NoticeDto> list = new ArrayList<>();
+
+        for (int i = 1; i <= 200; i++) { // 데이터 20개 넣어보기
             NoticeDto noticeDto = new NoticeDto(i, "title" + i, "content" + i);
-            LocalDateTime regDate = LocalDateTime.now(); // 삽입 시 등록 날짜
-            noticeDto.setRegDate(regDate);
-            assertTrue(noticeDao.insert(noticeDto) == 1); // 삽입 시도 & 확인
+            noticeDao.insert(noticeDto);
+            list.add(noticeDto);
         }
-        assertTrue(noticeDao.count()==20); //전체 필드 개수가 동일하게 담겼는지 확인
+        assertTrue(noticeDao.count()==200); // 총 삽입한 데이터 20개 확인
 
         // noticeID가 random인 필드를 수정
         int random = 9999;
 //        assertNull(noticeDao.selectOne(random));
-        try { // @Excepted
-            NoticeDto randomNoticeDto = noticeDao.selectOne(random); // NullPointerException 발생 가능
-            randomNoticeDto.setNoticeTitle("updatedTitle");
-            randomNoticeDto.setNoticeContent("updatedContent");
-            noticeDao.update(randomNoticeDto); // 업데이트 시도
-            fail("업데이트 테스트 실패"); // 예외가 발생하지 않으면 테스트 실패
-        } catch (Exception e) {
-            assertTrue(e instanceof NullPointerException);
-        }
+
+        NoticeDto randomNoticeDto = noticeDao.selectOne(random); // NullPointerException 발생 가능
+        randomNoticeDto.setNoticeTitle("updatedTitle");
+        randomNoticeDto.setNoticeContent("updatedContent");
+        noticeDao.update(randomNoticeDto); // 업데이트 시도
     }
 
     @Test

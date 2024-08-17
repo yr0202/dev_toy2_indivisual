@@ -22,11 +22,6 @@ public class NoticeDaoImpl implements NoticeDao {
     }
 
     @Override
-    public List<NoticeDto> selectPage(Map map) {
-        return session.selectList(namespace+"selectPage",map);
-    }
-
-    @Override
     public NoticeDto selectOne(int noticeID){
         return session.selectOne(namespace+"selectOne",noticeID);
 
@@ -80,5 +75,11 @@ public class NoticeDaoImpl implements NoticeDao {
     @Override
     public void setDisplayFlags(@Param("ids") List<Integer> displayFlagIds){
         session.update(namespace+"setDisplayFlags",displayFlagIds);
+    }
+
+    // 페이징처리
+    @Override
+    public List<NoticeDto> selectPage(Map map) {
+        return session.selectList(namespace+"selectPage",map);
     }
 }

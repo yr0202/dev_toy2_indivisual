@@ -14,59 +14,39 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Controller
-@RequestMapping("/notices")
 /*
 1.전체 공지사항 목록 보기
 3.공지사항 작성 - admin
 4.공지사항 수정 - admin
 5.공지사항 삭제 (1개, n개) - admin
 6.공지사항 전체 삭제 - admin
-
 공지글 보여줌 표시 여부 칼럼 추가하기
  */
+
+@Controller
+@RequestMapping("/notices")
+
 public class NoticeController {
     @Autowired
     NoticeService noticeService;
 
-    // 1. 전체 공지사항 목록 보기 (페이징 추가)
     @GetMapping
-    public String getNoticeList(@RequestParam(value = "role", required = false, defaultValue = "admin") String role,
-                                @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-                                @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize,
-                                Model m, HttpServletRequest request) throws Exception {
+    public String getNoticelist(@RequestParam(value = "role", required = false, defaultValue = "admin") String role, Model m, HttpSession session) throws Exception {
         List<NoticeDto> noticeList;
-
-        HttpSession session = request.getSession();
-//        String role = session.getAttribute("role"); //원래는 세션에서 role의 값을 가져와야함
-
-        // 임의로 세션에 "userId" 값을 세팅함
-        if (role.equals("admin")) {
-            session.setAttribute("userId", "admin1");
-        } else {
-            session.setAttribute("userId", "user1");
-        }
-        // 임의로 세션에 "role" 값을 세팅함
-        session.setAttribute("role", role);
-
-
-        // role에 따라 볼 수 있는 목록 화면이 다름
-        int totalCnt;
+//
         if (role.equals("admin")) {
             // 관리자는 모든 게시물을 볼 수 있음
-            totalCnt = noticeService.getTotalCount();
-            noticeList = noticeService.getNotices(page, pageSize);
+            noticeList = noticeService.readAllNotices();
+            session.setAttribute("userId", "admin1");  // 사용자 ID 임의로 설정
         } else {
-            totalCnt = noticeService.getVisibleNoticeCount();
-            noticeList = noticeService.getVisibleNotices(page, pageSize);
+            noticeList = noticeService.readVisibleNotices();
+            session.setAttribute("userId", "user1");
         }
-
-        PageHandler ph = new PageHandler(totalCnt, page, pageSize);
+        session.setAttribute("role", role);
 
         m.addAttribute("notices", noticeList);
         m.addAttribute("userId", session.getAttribute("userId"));
         m.addAttribute("role", session.getAttribute("role"));    // 사용자 권한을 설정
-        m.addAttribute("ph", ph);
 
         return "notice/list";
     }
@@ -75,7 +55,8 @@ public class NoticeController {
 
     //게시물 표시 여부 전체 선택 해제(null)일 경우 예외처리
     @PostMapping("/updateDisplayFlags")
-    public String updateDisplayFlags(@RequestParam(value = "displayFlags", required = false) List<Integer> displayFlagIds) { // required : null 허용
+    public String updateDisplayFlags(@RequestParam(value = "displayFlags", required = false) List<Integer> displayFlagIds) { // required = false : null 허용
+        //예외처리 : 어떤 상황에서 어떤 페이지로 갈건지 정리
         noticeService.updateDisplayFlags(displayFlagIds);
         return "redirect:/notices";  // 수정 후 다시 목록으로 리다이렉트
     }
@@ -110,28 +91,12 @@ public class NoticeController {
         return "notice/edit";  // view 이름, notice/edit.html
     }
 
-//    // 4. 공지사항 수정 처리
-//    @PostMapping("/edit/{id}")
-//    public String update(@PathVariable("id") int noticeID, NoticeDto noticeDto) {
-//        noticeDto.setNoticeID(noticeID);
-//        noticeService.updateNotice(noticeDto);
-//        return "redirect:/notices";  // 수정 후 목록 페이지로 리다이렉트
-//    }
-
-//    @PostMapping("/edit/{id}")
-//    public String update(@PathVariable("id") int noticeID,
-//                         @ModelAttribute NoticeDto noticeDto) {
-//        noticeDto.setNoticeID(noticeID);
-//        noticeService.updateNotice(noticeDto);
-//        return "redirect:/notices";
-//    }
-
     @PostMapping("/edit/{id}")
     public String update(@PathVariable("id") int noticeID,
                          @ModelAttribute NoticeDto noticeDto) {
-        // Check if displayFlag is null, and set a default value if needed
+
         if (noticeDto.getDisplayFlag() == null) {
-            noticeDto.setDisplayFlag("n");  // Default to 'n' if unchecked
+            noticeDto.setDisplayFlag("n");  // 기본값 'n'으로 지정
         }
         noticeDto.setNoticeID(noticeID);
         noticeService.updateNotice(noticeDto);

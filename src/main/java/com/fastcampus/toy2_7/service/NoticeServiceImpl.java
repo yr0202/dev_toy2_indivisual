@@ -2,6 +2,7 @@ package com.fastcampus.toy2_7.service;
 
 import com.fastcampus.toy2_7.dao.NoticeDao;
 import com.fastcampus.toy2_7.domain.NoticeDto;
+import com.fastcampus.toy2_7.domain.SearchCondition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,19 @@ public class NoticeServiceImpl implements NoticeService {
     - 게시물 수정(updateNotice)
     - 게시물 검색(searchNotices)
     */
+    @Override
+    public int getSearchResultCnt(SearchCondition sc) {
+        return noticeDao.getSearchResultCnt(sc);
+    }
+
+    @Override
+    public List<NoticeDto> getSearchResultPage(SearchCondition sc) {
+        return noticeDao.getSearchResultPage(sc);
+    }
+    @Override
+    public List<NoticeDto> getVisibleNoticesForUser(SearchCondition sc) {
+        return noticeDao.getVisibleNoticesForUser(sc);
+    }
 
     @Override
     public int getCount() throws Exception {
@@ -31,6 +45,11 @@ public class NoticeServiceImpl implements NoticeService {
     @Override
     public List<NoticeDto> readAllNotices() throws Exception {
         return noticeDao.selectAll();
+    }
+
+    @Override
+    public List<NoticeDto> findAll() throws Exception {
+        return noticeDao.findAll();
     }
 
     @Override

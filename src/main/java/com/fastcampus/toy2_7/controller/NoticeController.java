@@ -1,7 +1,10 @@
 package com.fastcampus.toy2_7.controller;
 
+import com.fastcampus.toy2_7.domain.MemberDto;
 import com.fastcampus.toy2_7.domain.NoticeDto;
 import com.fastcampus.toy2_7.domain.PageHandler;
+import com.fastcampus.toy2_7.domain.SearchCondition;
+import com.fastcampus.toy2_7.service.MemberService;
 import com.fastcampus.toy2_7.service.NoticeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,45 +33,92 @@ import static java.time.LocalDateTime.now;
 
 @Controller
 @RequestMapping("/notices")
-
 public class NoticeController {
     @Autowired
     NoticeService noticeService;
 
+    @Autowired
+    MemberService memberService;
+
     @GetMapping
-    public String getNoticelist( Model m, HttpSession session) throws Exception {
-        List<NoticeDto> noticeList;
+    public String list(Model m, SearchCondition sc, HttpSession session, HttpServletRequest request) {
+        // 세션에서 로그인된 사용자 ID를 가져옴
+        String memberId = request.getSession().getId();
+        System.out.println("memberId = " + memberId);
+//        String memberId = (String) session.getAttribute("id");
+        System.out.println("list controller -> session.getId value : "+ memberId);//admin
 
-        // role이 admin인지 user인지 임의로 설정
-        session.setAttribute("role", "admin");
-//        session.setAttribute("role", "user");
-
-        String role = (String) session.getAttribute("role");
-
-        if (role.equals("admin")) {
-            // 관리자는 모든 게시물을 볼 수 있음
-            noticeList = noticeService.readAllNotices();
-            session.setAttribute("userId", "admin1");  // 사용자 ID 임의로 설정
-        } else {
-            noticeList = noticeService.readVisibleNotices();
-            session.setAttribute("userId", "user1");
+        // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
+        if (memberId == null) {
+            return "redirect:/login/login";
         }
-        session.setAttribute("role", role);
 
-        m.addAttribute("notices", noticeList);
-        m.addAttribute("userId", session.getAttribute("userId"));
-        m.addAttribute("role", session.getAttribute("role"));    // 사용자 권한을 설정
+        try {
+            // 로그인한 사용자 정보를 member 테이블에서 가져옴
+            MemberDto loggedInMember = memberService.getMemberById(memberId);
 
-        return "notice/list";
+            // 사용자 역할 확인 (isAdmin 값 확인)
+            char isAdmin = loggedInMember.getIsAdmin();
+            System.out.println("loggedInMember.getIsAdmin() = " + loggedInMember.getIsAdmin()); //y
+            boolean isAdminRole = (isAdmin == 'Y');  // 관리자 여부를 확인
+
+            m.addAttribute("role", isAdminRole ? "admin" : "user");  // role 추가  // 관리자 여부를 Model에 추가
+
+            // 총 검색 결과 수 (검색 조건에 따라 다름)
+            int totalCnt = noticeService.getSearchResultCnt(sc);
+            System.out.println("totalCnt: " + totalCnt);
+            m.addAttribute("totalCnt", totalCnt);
+
+            // 페이지 처리
+            PageHandler pageHandler = new PageHandler(totalCnt, sc.getPage());
+            m.addAttribute("ph", pageHandler);
+
+            List<NoticeDto> noticeList;
+
+            if (isAdminRole) {
+                // 관리자는 모든 게시물을 볼 수 있음
+                noticeList = noticeService.getSearchResultPage(sc);
+                System.out.println("공지사항 목록: " + noticeList);  // noticeList 내용 출력
+            } else {
+                // 일반 사용자는 표시 가능한 게시물만 볼 수 있음
+                noticeList = noticeService.getVisibleNoticesForUser(sc);
+            }
+
+            System.out.println("공지사항 목록: " + noticeList);  // 디버깅용 출력
+
+            // 공지사항 목록을 Model에 추가
+            m.addAttribute("notices", noticeList);
+            m.addAttribute("userId", loggedInMember.getUserID());
+
+//            // 오늘의 시작 시간을 추가 (특정한 비교나 표시 용도)
+//            Instant startOfToday = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant();
+//            m.addAttribute("startOfToday", startOfToday.toEpochMilli());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            m.addAttribute("msg", "LIST_ERR");
+            m.addAttribute("totalCnt", 0);
+        }
+
+        return "notice/list";  // 공지사항 목록 화면으로 이동
     }
 
+
+    // 기존에 사용하던 코드 에러뜨면 이걸로 다시 돌려보기
 //    @GetMapping
-//    public String getNoticelist(@RequestParam(value = "role", required = false, defaultValue = "admin") String role, Model m, HttpSession session) throws Exception {
+//    public String getNoticelist( Model m, HttpSession session) throws Exception {
 //        List<NoticeDto> noticeList;
-////
+//
+//        // role이 admin인지 user인지 임의로 설정
+//        session.setAttribute("role", "admin");
+////        session.setAttribute("role", "user");
+//
+//        String role = (String) session.getAttribute("role");
+//
 //        if (role.equals("admin")) {
 //            // 관리자는 모든 게시물을 볼 수 있음
-//            noticeList = noticeService.readAllNotices();
+//            noticeList = noticeService.findAll();
+////            noticeList = noticeService.readAllNotices();
 //            session.setAttribute("userId", "admin1");  // 사용자 ID 임의로 설정
 //        } else {
 //            noticeList = noticeService.readVisibleNotices();
@@ -80,7 +133,6 @@ public class NoticeController {
 //        return "notice/list";
 //    }
 
-    // 세션 or dto 가져와서 값 확인하기...
 
     //게시물 표시 여부 전체 선택 해제(null)일 경우 예외처리
     @PostMapping("/updateDisplayFlags")
@@ -121,19 +173,6 @@ public class NoticeController {
         return "notice/edit";  // view 이름, notice/edit.html
     }
 
-    @PostMapping("/edit/{id}")
-    public String update(@PathVariable("id") int noticeID,
-                         @ModelAttribute NoticeDto noticeDto,HttpSession session) {
-
-        if (noticeDto.getDisplayFlag() == null) {
-            noticeDto.setDisplayFlag("n");  // 기본값 'n'으로 지정
-        }
-        noticeDto.setNoticeID(noticeID);
-        noticeDto.setModId((String)session.getAttribute("userId"));
-        noticeDto.setModDate(now());
-        noticeService.updateNotice(noticeDto);
-        return "redirect:/notices";
-    }
 
 
     // 5. 공지사항 삭제 (단일)

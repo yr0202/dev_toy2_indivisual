@@ -5,117 +5,167 @@
 
 <mapper namespace="com.fastcampus.toy2_7.dao.NoticeMapper">
     <sql id="noticeForm">
-        select noticeID, noticeTitle,noticeContent,priority,status,regId, regDate, modId, modDate, displayFlag
+        select noticeID, title,content,fixedCheck,fixedEndDate,displayCheck,viewCnt,regId,regDate,modId,modDate
         from notice
     </sql>
 
+<!--    검색 조건 매퍼 3개-->
+    <!-- 검색 결과 개수 가져오기 -->
+    <select id="getSearchResultCnt" parameterType="com.fastcampus.toy2_7.domain.SearchCondition" resultType="int">
+        SELECT COUNT(*)
+        FROM notice
+        WHERE title LIKE CONCAT('%', #{keyword}, '%')
+    </select>
 
-    <!--전체 컬럼 수-->
-    <select id="count" resultType="int">
-        select count(*) from Notice
+    <!-- 페이징 처리된 검색 결과 가져오기 -->
+    <select id="getSearchResultPage" parameterType="com.fastcampus.toy2_7.domain.SearchCondition" resultType="NoticeDto">
+        SELECT *
+        FROM notice
+        WHERE title LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY fixedCheck DESC, regDate DESC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <!-- 일반 사용자가 볼 수 있는 게시물 목록 가져오기 -->
+    <select id="getVisibleNoticesForUser" parameterType="com.fastcampus.toy2_7.domain.SearchCondition" resultType="NoticeDto">
+        SELECT *
+        FROM notice
+        WHERE displayCheck = 'y'
+        ORDER BY fixedCheck DESC, regDate DESC
+        LIMIT #{offset}, #{pageSize}
     </select>
 
 
-    <select id="selectOne" parameterType="int" resultType="NoticeDto">
-        -- noticeID 값과 동일한 필드 1개 검색
-        <include refid="noticeForm"/>
-        where noticeID = #{noticeID}
+<!--    여기부터 추가함-->
+
+    <select id="findAll" resultType="NoticeDTO">
+        SELECT * FROM Notice
+        ORDER BY fixedCheck DESC, regDate DESC
     </select>
 
-    <!--관리자 전용 전체 게시물 select-->
-    <select id="selectAll" resultType="NoticeDto">
-        <include refid="noticeForm"/>
-        ORDER BY priority desc, regDate desc;
+    <select id="findById" resultType="NoticeDTO">
+        SELECT * FROM Notice WHERE noticeID = #{id}
     </select>
 
-    <!-- 관리자가 아닌 사람만 볼 수 있는 게시물 목록 select-->
-    <!-- displayFlag =='y'인 게시물만 볼 수 있음 -->
-    <select id="selectVisible" resultType="NoticeDto">
-        <include refid="noticeForm"/>
-        where displayFlag = 'y'
-        ORDER BY priority desc, regDate desc;
-    </select>
-
-
-    <delete id="deleteAll">
-        -- 전체 필드 삭제
-        DELETE from notice;
-    </delete>
-
-    <delete id="deleteById" parameterType="int">
-        -- 특정 필드 1개 삭제
-        DELETE from notice where noticeID = #{noticeID};
-    </delete>
-
-    <delete id="deleteByIds" parameterType="list">
-        -- 특정 필드 n개 삭제
-        DELETE from notice
-        where noticeID in
-        <foreach item="item" collection="list" open="(" separator="," close=")">
-            #{item}
-        </foreach> ;
-    </delete>
-
-    <insert id="insert" parameterType="NoticeDto">
-        -- 필드 삽입
-        insert into notice (noticeID,noticeTitle, noticeContent,regId,regDate)
-        values
-            (#{noticeID}, #{noticeTitle},#{noticeContent},#{regId},#{regDate});
+    <insert id="insert" parameterType="NoticeDTO">
+        INSERT INTO Notice (title, content, fixedCheck, regId, regDate)
+        VALUES (#{title}, #{content}, #{fixedCheck}, #{regId}, NOW())
     </insert>
 
-    <!-- AI=AutoIncrement -->
-    <insert id="insertAI" parameterType="NoticeDto">
-        -- 필드 삽입
-        insert into notice (noticeTitle, noticeContent,regId,regDate,displayFlag)
-        values
-            ( #{noticeTitle},#{noticeContent},#{regId},now(),#{displayFlag});
-    </insert>
-
-    <update id="update" parameterType="NoticeDto">
-        -- 필드 수정
-        update notice
-        set
-            noticeTitle = #{noticeTitle},
-            noticeContent = #{noticeContent},
-            modDate = now(),
-            displayFlag = #{displayFlag}
-        where noticeID = #{noticeID};
+    <update id="update" parameterType="NoticeDTO">
+        UPDATE Notice SET title=#{title}, content=#{content}, fixedCheck=#{fixedCheck}, modId=#{modId}, modDate=NOW()
+        WHERE noticeID = #{noticeID}
     </update>
 
-    <!-- 기존 update매퍼는 원래 update2였음. modId 추가하려고 이름 변경함-->
-    <update id="update2" parameterType="NoticeDto">
-        -- 필드 수정
-        update notice
-        set
-            noticeTitle = #{noticeTitle},
-            noticeContent = #{noticeContent},
-            modId = #{modId},
-            modDate = #{modDate},
-            displayFlag = #{displayFlag}
-        where noticeID = #{noticeID};
-    </update>
+<!--    여기까지-->
 
-    <!--모든 게시물 'n'으로 초기화-->
-    <update id="setDisplayFlgsN">
-        Update notice
-        set displayFlag = 'n';
-    </update>
 
-    <!-- 선택된 게시물의 displayFlag를 'y'로 설정 -->
-    <update id="setDisplayFlags" parameterType="list">
-        UPDATE notice
-        SET displayFlag = 'y'
-        WHERE noticeID IN
-        <foreach item="id" index="index" collection="list" open="(" separator="," close=")">
-            #{id}
-        </foreach>
-    </update>
+<!--    &lt;!&ndash;전체 컬럼 수&ndash;&gt;-->
+<!--    <select id="count" resultType="int">-->
+<!--        select count(*) from Notice-->
+<!--    </select>-->
 
-    <!-- 페이징처리 -->
-    <select id="selectPage" parameterType="map" resultType="NoticeDto">
-        <include refid="noticeForm"/>
-        ORDER BY noticeID desc, regDate desc
-        LIMIT #{offset}, #{pageSize};
-    </select>
+
+<!--    <select id="selectOne" parameterType="int" resultType="NoticeDto">-->
+<!--        &#45;&#45; noticeID 값과 동일한 필드 1개 검색-->
+<!--        <include refid="noticeForm"/>-->
+<!--        where noticeID = #{noticeID}-->
+<!--    </select>-->
+
+<!--    &lt;!&ndash;관리자 전용 전체 게시물 select&ndash;&gt;-->
+<!--    <select id="selectAll" resultType="NoticeDto">-->
+<!--        <include refid="noticeForm"/>-->
+<!--        ORDER BY priority desc, regDate desc;-->
+<!--    </select>-->
+
+<!--    &lt;!&ndash; 관리자가 아닌 사람만 볼 수 있는 게시물 목록 select&ndash;&gt;-->
+<!--    &lt;!&ndash; displayFlag =='y'인 게시물만 볼 수 있음 &ndash;&gt;-->
+<!--    <select id="selectVisible" resultType="NoticeDto">-->
+<!--        <include refid="noticeForm"/>-->
+<!--        where displayFlag = 'y'-->
+<!--        ORDER BY priority desc, regDate desc;-->
+<!--    </select>-->
+
+
+<!--    <delete id="deleteAll">-->
+<!--        &#45;&#45; 전체 필드 삭제-->
+<!--        DELETE from notice;-->
+<!--    </delete>-->
+
+<!--    <delete id="deleteById" parameterType="int">-->
+<!--        &#45;&#45; 특정 필드 1개 삭제-->
+<!--        DELETE from notice where noticeID = #{noticeID};-->
+<!--    </delete>-->
+
+<!--    <delete id="deleteByIds" parameterType="list">-->
+<!--        &#45;&#45; 특정 필드 n개 삭제-->
+<!--        DELETE from notice-->
+<!--        where noticeID in-->
+<!--        <foreach item="item" collection="list" open="(" separator="," close=")">-->
+<!--            #{item}-->
+<!--        </foreach> ;-->
+<!--    </delete>-->
+
+<!--    <insert id="insert" parameterType="NoticeDto">-->
+<!--        &#45;&#45; 필드 삽입-->
+<!--        insert into notice (noticeID,noticeTitle, noticeContent,regId,regDate)-->
+<!--        values-->
+<!--            (#{noticeID}, #{noticeTitle},#{noticeContent},#{regId},#{regDate});-->
+<!--    </insert>-->
+
+<!--    &lt;!&ndash; AI=AutoIncrement &ndash;&gt;-->
+<!--    <insert id="insertAI" parameterType="NoticeDto">-->
+<!--        &#45;&#45; 필드 삽입-->
+<!--        insert into notice (noticeTitle, noticeContent,regId,regDate,displayFlag)-->
+<!--        values-->
+<!--            ( #{noticeTitle},#{noticeContent},#{regId},now(),#{displayFlag});-->
+<!--    </insert>-->
+
+<!--    <update id="update" parameterType="NoticeDto">-->
+<!--        &#45;&#45; 필드 수정-->
+<!--        update notice-->
+<!--        set-->
+<!--            noticeTitle = #{noticeTitle},-->
+<!--            noticeContent = #{noticeContent},-->
+<!--            modDate = now(),-->
+<!--            displayFlag = #{displayFlag}-->
+<!--        where noticeID = #{noticeID};-->
+<!--    </update>-->
+
+<!--    &lt;!&ndash; 기존 update매퍼는 원래 update2였음. modId 추가하려고 이름 변경함&ndash;&gt;-->
+<!--    <update id="update2" parameterType="NoticeDto">-->
+<!--        &#45;&#45; 필드 수정-->
+<!--        update notice-->
+<!--        set-->
+<!--            noticeTitle = #{noticeTitle},-->
+<!--            noticeContent = #{noticeContent},-->
+<!--            modId = #{modId},-->
+<!--            modDate = #{modDate},-->
+<!--            displayFlag = #{displayFlag}-->
+<!--        where noticeID = #{noticeID};-->
+<!--    </update>-->
+
+<!--    &lt;!&ndash;모든 게시물 'n'으로 초기화&ndash;&gt;-->
+<!--    <update id="setDisplayFlgsN">-->
+<!--        Update notice-->
+<!--        set displayFlag = 'n';-->
+<!--    </update>-->
+
+<!--    &lt;!&ndash; 선택된 게시물의 displayFlag를 'y'로 설정 &ndash;&gt;-->
+<!--    <update id="setDisplayFlags" parameterType="list">-->
+<!--        UPDATE notice-->
+<!--        SET displayFlag = 'y'-->
+<!--        WHERE noticeID IN-->
+<!--        <foreach item="id" index="index" collection="list" open="(" separator="," close=")">-->
+<!--            #{id}-->
+<!--        </foreach>-->
+<!--    </update>-->
+
+<!--    &lt;!&ndash; 페이징처리 &ndash;&gt;-->
+<!--    <select id="selectPage" parameterType="map" resultType="NoticeDto">-->
+<!--        <include refid="noticeForm"/>-->
+<!--        ORDER BY noticeID desc, regDate desc-->
+<!--        LIMIT #{offset}, #{pageSize};-->
+<!--    </select>-->
 
 </mapper>

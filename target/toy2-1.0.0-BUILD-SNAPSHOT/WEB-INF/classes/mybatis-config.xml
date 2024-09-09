@@ -5,5 +5,6 @@
 <configuration>
     <typeAliases>
         <typeAlias alias="NoticeDto" type="com.fastcampus.toy2_7.domain.NoticeDto"/>
+        <typeAlias alias="MemberDto" type="com.fastcampus.toy2_7.domain.MemberDto"/>
     </typeAliases>
 </configuration>

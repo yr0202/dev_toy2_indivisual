@@ -1,6 +1,7 @@
 package com.fastcampus.toy2_7.service;
 
 import com.fastcampus.toy2_7.domain.NoticeDto;
+import com.fastcampus.toy2_7.domain.SearchCondition;
 
 import java.util.List;
 import java.util.Map;
@@ -17,9 +18,15 @@ public interface NoticeService {
         - 게시물 검색(searchNotices)
         */
 
+    int getSearchResultCnt(SearchCondition sc);
+    List<NoticeDto> getSearchResultPage(SearchCondition sc) ;
+    List<NoticeDto> getVisibleNoticesForUser(SearchCondition sc) ;
+
     int getCount() throws Exception;
 
     List<NoticeDto> readAllNotices() throws Exception;
+
+    List<NoticeDto> findAll() throws Exception;
 
     List<NoticeDto> readVisibleNotices();
 

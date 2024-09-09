@@ -6,59 +6,34 @@ import java.util.Objects;
 
 public class NoticeDto {
     private int noticeID;
-    private String noticeTitle;
-    private String noticeContent;
-    private int priority;
-    private String status; // 없어도 될 것 같은데...
+    private String title;
+    private String content;
+    private String fixedCheck;
+    private String fixdeEndDate;
+    private String displayCheck;
+    private int viewCnt;
     private String regId;
-    private LocalDateTime regDate;
+    private Date regDate;
     private String modId;
-    private LocalDateTime modDate;
-    private String displayFlag;
+    private Date modDate;
 
+    // 생성자 만들어줘야함
     public NoticeDto() {}
-    public NoticeDto(int noticeID, String noticeTitle, String noticeContent){
-        this.noticeID = noticeID;
-        this.noticeTitle = noticeTitle;
-        this.noticeContent = noticeContent;
-    }
-    public NoticeDto( int noticeID, String noticeTitle,String noticeContent, String regId, LocalDateTime regDate){
-        this.noticeID = noticeID;
-        this.noticeTitle = noticeTitle;
-        this.regDate = regDate;
-        this.regId = regId;
-        this.noticeContent = noticeContent;
-    }
-    public NoticeDto( String noticeTitle,String noticeContent, String regId, LocalDateTime regDate, String displayFlag){
-        this.noticeTitle = noticeTitle;
-        this.noticeContent = noticeContent;
-        this.regDate = regDate;
-        this.regId = regId;
-        this.noticeContent = noticeContent;
-        this.displayFlag = displayFlag;
-    }
-
-    public NoticeDto(String noticeTitle, String noticeContent, String displayFlag, String modId, LocalDateTime modDate) {
-        this.noticeTitle = noticeTitle;
-        this.noticeContent = noticeContent;
-        this.modId = modId;
-        this.modDate = modDate;
-        this.displayFlag = displayFlag;
-    }
 
     @Override
     public String toString() {
         return "NoticeDto{" +
                 "noticeID=" + noticeID +
-                ", noticeTitle='" + noticeTitle + '\'' +
-                ", noticeContent='" + noticeContent + '\'' +
-                ", priority=" + priority +
-                ", status='" + status + '\'' +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", fixedCheck='" + fixedCheck + '\'' +
+                ", fixdeEndDate='" + fixdeEndDate + '\'' +
+                ", displayCheck='" + displayCheck + '\'' +
+                ", viewCnt=" + viewCnt +
                 ", regId='" + regId + '\'' +
                 ", regDate=" + regDate +
                 ", modId='" + modId + '\'' +
                 ", modDate=" + modDate +
-                ", displayFlag='" + displayFlag + '\'' +
                 '}';
     }
 
@@ -67,23 +42,13 @@ public class NoticeDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         NoticeDto noticeDto = (NoticeDto) o;
-        return noticeID == noticeDto.noticeID && priority == noticeDto.priority && Objects.equals(noticeTitle, noticeDto.noticeTitle) && Objects.equals(noticeContent, noticeDto.noticeContent) && Objects.equals(status, noticeDto.status) && Objects.equals(regId, noticeDto.regId) && Objects.equals(regDate, noticeDto.regDate) && Objects.equals(modId, noticeDto.modId) && Objects.equals(modDate, noticeDto.modDate) && Objects.equals(displayFlag, noticeDto.displayFlag);
+        return noticeID == noticeDto.noticeID && viewCnt == noticeDto.viewCnt && Objects.equals(title, noticeDto.title) && Objects.equals(content, noticeDto.content) && Objects.equals(fixedCheck, noticeDto.fixedCheck) && Objects.equals(fixdeEndDate, noticeDto.fixdeEndDate) && Objects.equals(displayCheck, noticeDto.displayCheck) && Objects.equals(regId, noticeDto.regId) && Objects.equals(regDate, noticeDto.regDate) && Objects.equals(modId, noticeDto.modId) && Objects.equals(modDate, noticeDto.modDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(noticeID, noticeTitle, noticeContent, priority, status, regId, regDate, modId, modDate, displayFlag);
+        return Objects.hash(noticeID, title, content, fixedCheck, fixdeEndDate, displayCheck, viewCnt, regId, regDate, modId, modDate);
     }
-
-    public String getDisplayFlag() {
-        return displayFlag;
-    }
-
-    public void setDisplayFlag(String displayFlag) {
-        this.displayFlag = displayFlag;
-    }
-
-
 
     public int getNoticeID() {
         return noticeID;
@@ -93,36 +58,52 @@ public class NoticeDto {
         this.noticeID = noticeID;
     }
 
-    public String getNoticeTitle() {
-        return noticeTitle;
+    public String getTitle() {
+        return title;
     }
 
-    public void setNoticeTitle(String noticeTitle) {
-        this.noticeTitle = noticeTitle;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public String getNoticeContent() {
-        return noticeContent;
+    public String getContent() {
+        return content;
     }
 
-    public void setNoticeContent(String noticeContent) {
-        this.noticeContent = noticeContent;
+    public void setContent(String content) {
+        this.content = content;
     }
 
-    public int getPriority() {
-        return priority;
+    public String getFixedCheck() {
+        return fixedCheck;
     }
 
-    public void setPriority(int priority) {
-        this.priority = priority;
+    public void setFixedCheck(String fixedCheck) {
+        this.fixedCheck = fixedCheck;
     }
 
-    public String getStatus() {
-        return status;
+    public String getFixdeEndDate() {
+        return fixdeEndDate;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setFixdeEndDate(String fixdeEndDate) {
+        this.fixdeEndDate = fixdeEndDate;
+    }
+
+    public String getDisplayCheck() {
+        return displayCheck;
+    }
+
+    public void setDisplayCheck(String displayCheck) {
+        this.displayCheck = displayCheck;
+    }
+
+    public int getViewCnt() {
+        return viewCnt;
+    }
+
+    public void setViewCnt(int viewCnt) {
+        this.viewCnt = viewCnt;
     }
 
     public String getRegId() {
@@ -133,11 +114,11 @@ public class NoticeDto {
         this.regId = regId;
     }
 
-    public LocalDateTime getRegDate() {
+    public Date getRegDate() {
         return regDate;
     }
 
-    public void setRegDate(LocalDateTime regDate) {
+    public void setRegDate(Date regDate) {
         this.regDate = regDate;
     }
 
@@ -149,11 +130,11 @@ public class NoticeDto {
         this.modId = modId;
     }
 
-    public LocalDateTime getModDate() {
+    public Date getModDate() {
         return modDate;
     }
 
-    public void setModDate(LocalDateTime modDate) {
+    public void setModDate(Date modDate) {
         this.modDate = modDate;
     }
 

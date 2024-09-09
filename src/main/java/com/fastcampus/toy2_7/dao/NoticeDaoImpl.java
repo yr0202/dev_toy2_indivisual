@@ -1,6 +1,7 @@
 package com.fastcampus.toy2_7.dao;
 
 import com.fastcampus.toy2_7.domain.NoticeDto;
+import com.fastcampus.toy2_7.domain.SearchCondition;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,21 @@ public class NoticeDaoImpl implements NoticeDao {
     private static String namespace = "com.fastcampus.toy2_7.dao.NoticeMapper.";
 
     @Override
+    public int getSearchResultCnt(SearchCondition sc) {
+        return session.selectOne(namespace + "getSearchResultCnt", sc);
+    }
+
+    @Override
+    public List<NoticeDto> getSearchResultPage(SearchCondition sc) {
+        return session.selectList(namespace + "getSearchResultPage", sc);
+    }
+
+    @Override
+    public List<NoticeDto> getVisibleNoticesForUser(SearchCondition sc) {
+        return session.selectList(namespace + "getVisibleNoticesForUser", sc);
+    }
+
+    @Override
     public int count() throws Exception{
         return session.selectOne(namespace+"count");
     }
@@ -30,6 +46,11 @@ public class NoticeDaoImpl implements NoticeDao {
     @Override
     public List<NoticeDto> selectAll() throws Exception {
         return session.selectList(namespace+"selectAll");
+    }
+
+    @Override
+    public List<NoticeDto> findAll() throws Exception {
+        return session.selectList(namespace+"findAll");
     }
 
     @Override
